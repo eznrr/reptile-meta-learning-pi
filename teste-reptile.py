@@ -1,6 +1,6 @@
 import torch
 import torch.nn as nn
-from transformers import DistilBertTokenizer, DistilBertModel
+from transformers import BertTokenizer, BertModel
 
 # Definir categorias de interações terapêuticas
 categorias_interacoes = {
@@ -9,7 +9,7 @@ categorias_interacoes = {
 }
 
 # Carregar tokenizador e modelo treinado
-tokenizer = DistilBertTokenizer.from_pretrained("distilbert-base-uncased")
+tokenizer = BertTokenizer.from_pretrained("bert-base-uncased")
 
 class Classifier(nn.Module):
     def __init__(self, embedding_dim, num_classes):
@@ -30,7 +30,7 @@ model.eval()  # Colocar o modelo em modo de avaliação
 def get_embedding(sentence):
     inputs = tokenizer(sentence, return_tensors="pt", padding=True, truncation=True)
     with torch.no_grad():
-        outputs = DistilBertModel.from_pretrained("distilbert-base-uncased")(**inputs)
+        outputs = BertModel.from_pretrained("bert-base-uncased")(**inputs)
     return outputs.last_hidden_state[:, 0, :].squeeze(0)  # Extraindo o token [CLS]
 
 # Função para prever a categoria da interação
@@ -41,7 +41,7 @@ def prever_categoria(frase):
     return categorias_interacoes[predicao]
 
 # Exemplo de teste
-frase_teste = "Talvez voce tenha que pensar no que fez para que isso acontecesse, nao?"
+frase_teste = "Me conte mais como foi essa sua interação com ele."
 categoria_prevista = prever_categoria(frase_teste)
 
 print(f"Frase: {frase_teste}")
